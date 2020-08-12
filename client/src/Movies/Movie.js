@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { Route } from "react-router-dom";
 import MovieCard from "./MovieCard";
+
+import MovieUpdate from "./MovieUpdate";
 
 function Movie({ addToSavedList }) {
   const [movie, setMovie] = useState(null);
@@ -33,6 +36,11 @@ function Movie({ addToSavedList }) {
       <div className="save-button" onClick={saveMovie}>
         Save
       </div>
+      <Route 
+        exact
+        path="/update-movie/:id"
+        render={(props) => <MovieUpdate {...props} movie={movie} />}
+      />
     </div>
   );
 }
