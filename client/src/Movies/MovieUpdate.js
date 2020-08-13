@@ -2,31 +2,33 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import axios from "axios";
 
+const initialValue = {
+  title: "",
+  director: "",
+  metascore: "",
+  stars: [],
+};
+
 const MovieUpdate = (props) => {
+  const { push } = useHistory();
   const { id } = useParams();
-  const { movieList, setMovieList } = useState({
-    title: "",
-    director: "",
-    metascore: 0,
-    stars: [],
-  });
-  const { push, goBack } = useHistory();
+  console.log(id);
+  const [movie, setMovie] = useState(initialValue);
 
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/movies/${id}`)
       .then((res) => {
-        setMovieList(res.data);
+        console.log(res);
+        setMovie(res.data);
       })
-      .catch((err) =>
-        console.error("Something went wrong here: ", err.message)
-      );
+      .catch((err) => console.log(err));
   }, [id]);
 
   const handleChange = (e) => {
     e.preventDefault();
-    setMovieList({
-      ...movieList,
+    setMovie({
+      ...movie,
       [e.target.name]: e.target.value,
     });
   };
@@ -34,12 +36,13 @@ const MovieUpdate = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put(`http://localhost:5000/movies/${id}`, movieList)
+      .put(`http://localhost:5000/api/movies/${id}`, movie)
       .then((res) => {
-        props.setMovieList(res.data);
-        goBack();
+        console.log(res);
+				setMovie(res.data);
+				push("/");
       })
-      .catch((err) => console.error("Something went wrong: ", err.message));
+      .catch((err) => console.log(`${err.response}`));
   };
 
   return (
@@ -48,28 +51,28 @@ const MovieUpdate = (props) => {
         <input
           type="text"
           name="title"
-          value={movieList.title}
+          value={movie.title}
           placeholder="Movie Title"
           onChange={handleChange}
         />
         <input
           type="text"
           name="director"
-          value={movieList.director}
+          value={movie.director}
           placeholder="Movie Director"
           onChange={handleChange}
         />
         <input
           type="number"
           name="metascore"
-          value={movieList.title}
+          value={movie.title}
           placeholder="100"
           onChange={handleChange}
         />
         <input
           type="text"
           name="stars"
-          value={movieList.stars}
+          value={movie.stars}
           placeholder="Movie Stars"
           onChange={handleChange}
         />
